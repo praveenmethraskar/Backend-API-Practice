@@ -1,6 +1,6 @@
 import UserModel from "../repository/userRepository.js"
 
-// 1. Create a user
+// Create a user
 export const createUser = async (req, res) => {
     try {
         const { firstname, lastname, exam, address } = req.body
@@ -13,25 +13,29 @@ export const createUser = async (req, res) => {
             exam: user.exam,
             address: user.address
         }
-
+        console.log("Response JSON:", JSON.stringify(userResponse, null, 2))
         res.status(201).json({ message: "User saved successfully", user: userResponse })
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
 }
 
-// 2. Get count by exam
+// Count users by exam
 export const getCountByExam = async (req, res) => {
     try {
         const examName = req.params.exam
         const count = await UserModel.countDocuments({ exam: examName })
-        res.json({ exam: examName, count })
+        const response = { exam: examName, count };
+
+        // Log the response in JSON format in console
+        console.log("Response JSON:", JSON.stringify(response, null, 2));
+        res.json(response)
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
 }
 
-// 3. Get users by date
+// Get users by date
 export const getExamsByDate = async (req, res) => {
     try {
         const date = new Date(req.params.date)
@@ -42,7 +46,7 @@ export const getExamsByDate = async (req, res) => {
             { createdAt: { $gte: date, $lt: nextDate } },
             { _id: 0, createdAt: 0, __v: 0 }
         ).lean()
-
+        console.log("Response JSON:", JSON.stringify(exams, null, 2))
         res.json({ date: req.params.date, exams, total: exams.length })
     } catch (err) {
         res.status(500).json({ error: err.message })
